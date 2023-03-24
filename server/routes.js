@@ -112,6 +112,85 @@ router.post('/studentByCountry',mware(students), (req, res) => {
     res.json({status: 200, message: 'Success', data: res.paginatedResults});
 })
 
+
+
+router.post('/getComparison', (req, res) => {
+    try{
+
+        let data1 ,data2;
+        const { person1 ,person2} = req.body;
+        let id1 = (person1);
+        let id2 = (person2);
+        for (var i = 0; i < students.length; i++) {
+            if (students[i].id == id1) {
+                data1 = students[i];
+                break;
+            }
+        }
+        for (var i = 0; i < students.length; i++) {
+            if (students[i].id == id2) {
+                data2 = students[i];
+                break;
+            }
+        }
+        for(var i =0;i<schools.length;i++){
+            if(data1.SchoolID == schools[i].SchoolID){
+                data1.schoolName = schools[i].name;
+                data1.schoolAddress = schools[i].address;
+                break;
+            }
+        }
+        for(var i =0;i<schools.length;i++){
+            if(data2.SchoolID == schools[i].SchoolID){
+                data2.schoolName = schools[i].name;
+                data2.schoolAddress = schools[i].address;
+                break;
+            }
+        }
+        for(var i =0;i<reviews.length;i++){
+            if(data1.id == reviews[i].id){
+                data1.chair = reviews[i].chair;
+                data1.ac = reviews[i].ac;
+                data1.food = reviews[i].food;
+                break;
+            }
+        }
+        for(var i =0;i<reviews.length;i++){
+            if(data2.id == reviews[i].id){
+                data2.chair = reviews[i].chair;
+                data2.ac = reviews[i].ac;
+                data2.food = reviews[i].food;
+                break;
+            }
+        }
+        let opinionDifferance = [];
+        console.log('data1',data1);
+        console.log('data2',data2);
+        if(data1.SchoolID === data2.SchoolID){
+            if(data1.chair !== data2.chair){
+                opinionDifferance.push('chair');
+            }
+            if(data1.ac !== data2.ac){
+                opinionDifferance.push('ac');
+            }
+            if(data1.food !== data2.food){
+                opinionDifferance.push('food');
+            }
+            console.log('opinionDifferance',opinionDifferance);
+            res.json({status:200,msg:"They are from same school but they have opinion differance ",opinionDifferance:opinionDifferance});
+            return
+        }
+        
+        
+        console.log('opinionDifferance',opinionDifferance);
+        res.json({status:200,msg:"They are from different school so cannot calculate opinion differance",opinionDifferance:opinionDifferance});
+    }catch(error){
+        res.json({status:500,error:error});
+    }
+
+})
+
+
 router.post('/setstudent', (req, res) => {
     console.log('students',students);
     try{
